@@ -28,20 +28,20 @@ namespace
 				DWORD xinput9_1_ErrorCode = 0;
 
 				// Try XInput 1.3 first as it has all the features we need.
-				mHandle = LoadLibrary("xinput1_3.dll");
+				mHandle = LoadLibraryW(L"xinput1_3.dll");
 				xinput1_3_ErrorCode = GetLastError();
 
 				// Look for XInput 1.4 as a backup (newer machines may not have 1.3 at all).
 				if(mHandle == NULL)
 				{
-					mHandle = LoadLibrary("xinput1_4.dll");
+					mHandle = LoadLibraryW(L"xinput1_4.dll");
 					xinput1_4_ErrorCode = GetLastError();
 				}
 
 				// Look for XInput 9.1.0 as a last resort! One of the others should exist but we may as well try to load it.
 				if(mHandle == NULL)
 				{
-					mHandle = LoadLibrary("xinput9_1_0.dll");
+					mHandle = LoadLibraryW(L"xinput9_1_0.dll");
 					xinput9_1_ErrorCode = GetLastError();
 				}
 
@@ -70,7 +70,7 @@ namespace
 	XInputLoader gXInputLoader;
 }
 
-DWORD XInputGamePadGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
+__declspec(dllexport) DWORD XInputGamePadGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 {
 	gXInputLoader.ensureLoaded();
 	if(gXInputLoader.mGetState != NULL)
@@ -83,7 +83,7 @@ DWORD XInputGamePadGetState(DWORD dwUserIndex, XINPUT_STATE* pState)
 	}
 }
 
-void XInputGamePadSetState(DWORD dwUserIndex, float leftMotor, float rightMotor)
+__declspec(dllexport) void XInputGamePadSetState(DWORD dwUserIndex, float leftMotor, float rightMotor)
 {
 	gXInputLoader.ensureLoaded();
 	if(gXInputLoader.mSetState != NULL)
